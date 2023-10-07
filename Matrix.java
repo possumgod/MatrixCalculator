@@ -37,6 +37,7 @@ public class Matrix{
         return this.getMatrix();
     }
 
+    //multiplies a "row" of the matrix by a constant
     public float[][] multiply(int constant, int row){
         for (int i = 0; i < getCols(); i++){
             this.getMatrix()[i][row - 1] = this.getMatrix()[i][row - 1] * constant;
