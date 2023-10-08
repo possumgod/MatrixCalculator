@@ -1,14 +1,14 @@
 //written by Elijah Gallagher!!!
-//has all computation methods, interface will be another file
+//all functions (as of right now) besides the isValid() method, assumes information given is valid
 
-public class Matrix{
+public class Matrix {
     private int rows, cols;
     private float[][] matrix;
 
     //constuctor for the matrix
-    public Matrix(float[][] matrix){
-        this.cols = matrix.length;
-        this.rows = matrix[0].length;
+    public Matrix(float[][] matrix) {
+        this.cols = matrix[0].length;
+        this.rows = matrix.length;
         this.matrix = matrix;
     }
 
@@ -24,8 +24,8 @@ public class Matrix{
 
     //checks if the matrix is valid by checking if all the rows have the same num of vals
     //call before contstructing
-    public boolean isValid(int[][] matrix){
-        for (int i = 0; i < matrix.length; i++){
+    public boolean isValid(int[][] matrix) {
+        for (int i = 1; i < matrix.length; i++) {
             if (matrix[0].length != matrix[i].length){
                 return false;
             }
@@ -33,25 +33,63 @@ public class Matrix{
         return true;
     }
 
-    public float[][] swap(int constant, int row){
+    //swap function creates a copy of each row given, then swaps the value through a
+        //for loop with the temp arrays
+    public float[][] swap(int row1, int row2) {
+        float[] temp1 = new float[this.getCols()];
+        float[] temp2 = new float[this.getCols()];
+
+        for (int i = 0; i < this.getCols(); i++) {
+            temp1[i] = this.getMatrix()[row1 - 1][i];
+            temp2[i] = this.getMatrix()[row2 - 1][i];
+        }
+
+        for (int i = 0; i < this.getCols(); i++) {
+            this.getMatrix()[row1 - 1][i] = temp2[i];
+            this.getMatrix()[row2 - 1][i] = temp1[i];
+        }
+
         return this.getMatrix();
     }
 
     //multiplies a "row" of the matrix by a constant
-    public float[][] multiply(int constant, int row){
-        for (int i = 0; i < getCols(); i++){
-            this.getMatrix()[i][row - 1] = this.getMatrix()[i][row - 1] * constant;
+    public float[][] multiply(float constant, int row) {
+        for (int i = 0; i < this.getCols(); i++){
+            this.getMatrix()[row - 1][i] = this.getMatrix()[row - 1][i] * constant;
         }
         
+        return this.getMatrix();
+    }
+
+    //subtracts one row of matrix by the multiple 
+    public float[][] multiplyByRow(float constant, int row1, int row2) {
+        for (int i = 0; i < this.getCols(); i++) {
+            this.getMatrix()[row2 - 1][i] = this.getMatrix()[row2 -1][i] - (this.getMatrix()[row1 -1][i] * constant);
+        }
+
+        return this.getMatrix();
+    }
+
+    //puts the matrix into ref form, checks if leading entry in the first row is 0, if so, exchange with second row
+    ///after that, 
+    public float[][] REF() {
+        int curRow = 0;
+        while (true) {
+            if (this.getMatrix()[curRow][0] == 0) {
+                swap(curRow, 2);
+            }
+            break;
+        }
+
         return this.getMatrix();
     }
 
     @Override
     public String toString(){
         String string = "";
-        for (int i = 0; i < getCols(); i++){
-            for (int j = 0; j < getRows(); j++){
-                string += this.matrix[j][i] + " ";
+        for (int r = 0; r < this.getRows(); r++) {
+            for (int c = 0; c < this.getCols(); c++) {
+                string += this.getMatrix()[r][c] + " ";
             }
             string += "\n";
         }
@@ -59,10 +97,18 @@ public class Matrix{
     }
 
     public static void main(String[] args) {
-        float[][] m1 = {{1, 1}, {2, 2}};
+        //first [] is row, [][] is col
+        float[][] m1 = {{1, 1, 1}, {2, 2, 2}};
         Matrix test = new Matrix(m1);
         System.out.println(test);
-        test.multiply(2, 1);
-        System.out.println(test);
+        
+        test.multiply(3, 1);
+        System.out.println("Multiplying row 1 by 3:\n" + test);
+        
+        test.swap(1, 2);
+        System.out.println("Swapping row 1 and row 2:\n" + test);
+
+        test.multiplyByRow(1, 1, 2);
+        System.out.println("Subtracted row 2 from 1 * row 1:\n" + test);
     }
 }
